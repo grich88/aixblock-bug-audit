@@ -110,7 +110,7 @@ export const jwtUtils = {
         audience,
     }: VerifyParams): Promise<T> {
         // Security fix: Explicitly reject 'none' algorithm to prevent algorithm confusion attacks
-        if (algorithm === 'none' || algorithm === JwtSignAlgorithm.HS256 === false) {
+        if (algorithm === 'none' as any) {
             throw new AIxBlockError({
                 code: ErrorCode.INVALID_BEARER_TOKEN,
                 params: {

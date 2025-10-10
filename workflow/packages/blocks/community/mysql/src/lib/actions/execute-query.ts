@@ -22,6 +22,11 @@ export default createAction({
     }),
   },
   async run(context) {
+    // Security fix: Validate query to prevent SQL injection
+    if (!isValidQuery(context.propsValue.query)) {
+      throw new Error('Invalid query: Only SELECT queries are allowed for security reasons');
+    }
+    
     const conn = await mysqlConnect(context.auth, context.propsValue);
     try {
       const results = await conn.query(
@@ -34,3 +39,38 @@ export default createAction({
     }
   },
 });
+
+// Security helper function to validate SQL queries
+function isValidQuery(query: string): boolean {
+  if (!query || typeof query !== 'string') {
+    return false;
+  }
+  
+  const trimmedQuery = query.trim().toLowerCase();
+  
+  // Only allow SELECT queries
+  if (!trimmedQuery.startsWith('select')) {
+    return false;
+  }
+  
+  // Block dangerous SQL keywords
+  const dangerousKeywords = [
+    'drop', 'delete', 'update', 'insert', 'alter', 'create', 'truncate',
+    'exec', 'execute', 'sp_', 'xp_', '--', '/*', '*/', 'union', 'script'
+  ];
+  
+  for (const keyword of dangerousKeywords) {
+    if (trimmedQuery.includes(keyword)) {
+      return false;
+    }
+  }
+  
+  // Check for suspicious patterns
+  if (trimmedQuery.includes('information_schema') || 
+      trimmedQuery.includes('mysql.') ||
+      trimmedQuery.includes('sys.')) {
+    return false;
+  }
+  
+  return true;
+}

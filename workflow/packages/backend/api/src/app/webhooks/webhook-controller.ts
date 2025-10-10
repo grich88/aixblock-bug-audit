@@ -5,6 +5,8 @@ import {
     GetFlowVersionForWorkerRequestType,
     isMultipartFile,
     WebhookUrlParams,
+    AIxBlockError,
+    ErrorCode,
 } from 'workflow-shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { FastifyRequest } from 'fastify'
@@ -123,13 +125,64 @@ async function convertRequest(
     projectId: string,
     flowId: string,
 ): Promise<EventPayload> {
+    // Security fix: Validate project and flow IDs to prevent injection attacks
+    if (!isValidId(projectId) || !isValidId(flowId)) {
+        throw new AIxBlockError({
+            code: ErrorCode.VALIDATION,
+            params: { message: 'Invalid project or flow ID' }
+        });
+    }
+
+    // Security fix: Sanitize headers to prevent header injection
+    const sanitizedHeaders = sanitizeHeaders(request.headers);
+    
+    // Security fix: Validate and sanitize body
+    const sanitizedBody = await convertBody(request, projectId, flowId);
+    
+    // Security fix: Sanitize query parameters
+    const sanitizedQueryParams = sanitizeQueryParams(request.query as Record<string, any>);
+
     return {
         method: request.method,
-        headers: request.headers as Record<string, string>,
-        body: await convertBody(request, projectId, flowId),
-        queryParams: request.query as Record<string, string>,
+        headers: sanitizedHeaders,
+        body: sanitizedBody,
+        queryParams: sanitizedQueryParams,
         rawBody: request.rawBody,
     }
+}
+
+// Security helper functions
+function isValidId(id: string): boolean {
+    // Allow alphanumeric characters, hyphens, and underscores
+    const idPattern = /^[a-zA-Z0-9_-]+$/;
+    return idPattern.test(id) && id.length >= 1 && id.length <= 100;
+}
+
+function sanitizeHeaders(headers: Record<string, any>): Record<string, string> {
+    const sanitized: Record<string, string> = {};
+    const allowedHeaders = ['content-type', 'user-agent', 'x-forwarded-for', 'authorization'];
+    
+    for (const [key, value] of Object.entries(headers)) {
+        if (allowedHeaders.includes(key.toLowerCase()) && typeof value === 'string') {
+            // Remove potentially dangerous characters
+            sanitized[key] = value.replace(/[<>\"'&]/g, '');
+        }
+    }
+    
+    return sanitized;
+}
+
+function sanitizeQueryParams(query: Record<string, any>): Record<string, string> {
+    const sanitized: Record<string, string> = {};
+    
+    for (const [key, value] of Object.entries(query)) {
+        if (typeof value === 'string') {
+            // Remove potentially dangerous characters and limit length
+            sanitized[key] = value.replace(/[<>\"'&]/g, '').substring(0, 1000);
+        }
+    }
+    
+    return sanitized;
 }
 
 

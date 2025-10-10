@@ -5,8 +5,10 @@ import fastify, { FastifyBaseLogger, FastifyInstance } from 'fastify'
 import fastifyFavicon from 'fastify-favicon'
 import { fastifyRawBody } from 'fastify-raw-body'
 import qs from 'qs'
+import path from 'path'
+import rateLimit from '@fastify/rate-limit'
 import { AppSystemProp, exceptionHandler } from 'workflow-server-shared'
-import { apId, ApMultipartFile } from 'workflow-shared'
+import { apId, ApMultipartFile, AIxBlockError, ErrorCode } from 'workflow-shared'
 import { setupApp } from './app'
 import { healthModule } from './health/health.module'
 import { errorHandler } from './helper/error-handler'
@@ -49,11 +51,35 @@ async function setupBaseApp(): Promise<FastifyInstance> {
         },
     }) 
     await app.register(fastifyFavicon)
+    
+    // Security fix: Add rate limiting to prevent DoS attacks
+    await app.register(rateLimit, {
+        max: 100,
+        timeWindow: '1 minute',
+        keyGenerator: (request) => request.ip,
+        errorResponseBuilder: (request, context) => ({
+            code: 429,
+            error: 'Too Many Requests',
+            message: `Rate limit exceeded, retry in ${context.after}`
+        })
+    })
+    
     await app.register(fastifyMultipart, {
         attachFieldsToBody: 'keyValues',
         async onFile(part: MultipartFile) {
+            // Security fix: Validate filename to prevent path traversal attacks
+            if (!isValidFilename(part.filename)) {
+                throw new AIxBlockError({
+                    code: ErrorCode.VALIDATION,
+                    params: { message: 'Invalid filename: path traversal detected' }
+                });
+            }
+            
+            // Security fix: Sanitize filename
+            const sanitizedFilename = sanitizeFilename(part.filename);
+            
             const apFile: ApMultipartFile = {
-                filename: part.filename,
+                filename: sanitizedFilename,
                 data: await part.toBuffer(),
                 type: 'file',
             };
@@ -74,10 +100,13 @@ async function setupBaseApp(): Promise<FastifyInstance> {
 
     await app.register(formBody, { parser: (str) => qs.parse(str) })
     app.setErrorHandler(errorHandler)
+    // Security fix: Restrict CORS to specific domains
     await app.register(cors, {
-        origin: '*',
-        exposedHeaders: ['*'],
-        methods: ['*'],
+        origin: ['https://app.aixblock.io', 'https://api.aixblock.io'],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['Content-Length', 'X-Total-Count'],
     })
     // SurveyMonkey
     app.addContentTypeParser(
@@ -88,5 +117,45 @@ async function setupBaseApp(): Promise<FastifyInstance> {
     await app.register(healthModule)
 
     return app
+}
+
+// Security helper functions for file upload validation
+function isValidFilename(filename: string): boolean {
+    if (!filename || typeof filename !== 'string') {
+        return false;
+    }
+    
+    // Check for path traversal patterns
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return false;
+    }
+    
+    // Check for null bytes
+    if (filename.includes('\0')) {
+        return false;
+    }
+    
+    // Check file extension
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv', '.json', '.xml'];
+    const extension = path.extname(filename).toLowerCase();
+    if (!allowedExtensions.includes(extension)) {
+        return false;
+    }
+    
+    // Check filename length
+    if (filename.length > 255) {
+        return false;
+    }
+    
+    return true;
+}
+
+function sanitizeFilename(filename: string): string {
+    // Remove any remaining dangerous characters
+    return filename
+        .replace(/[^a-zA-Z0-9.-]/g, '_')
+        .replace(/\.{2,}/g, '.')
+        .replace(/^\.+|\.+$/g, '') // Remove leading/trailing dots
+        .substring(0, 255);
 }
 

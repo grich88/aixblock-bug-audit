@@ -134,16 +134,28 @@ async function getDatasourceByKeyAndFlowId(mappingKey: string, flowId: string, f
 async function hasPermissionWithAssignee(assignee: string, userId: string) {
     assertNotNullOrUndefined(userId, 'userId');
 
+    // Security fix: Validate email format to prevent injection attacks
+    if (!isValidEmail(assignee)) {
+        throw new AIxBlockError({
+            code: ErrorCode.VALIDATION,
+            params: {
+                message: 'Invalid email format for assignee.',
+            },
+        });
+    }
+
     const user = await userService.getOneOrFail({ id: userId });
     const identity = await userIdentityRepository().findOneByOrFail({ id: user.identityId });
-    console.log('user', user);
-    console.log('identity', identity);
+    
+    // Security fix: Remove console.log statements that expose sensitive information
+    // console.log('user', user); // REMOVED FOR SECURITY
+    // console.log('identity', identity); // REMOVED FOR SECURITY
 
     // Admin can view all tasks
     if (user.platformRole === PlatformRole.ADMIN) return;
 
-    // Will compare with email from externalId in platform
-    if (user.externalId && user.externalId.includes(assignee)) return;
+    // Security fix: Use strict equality and proper email validation
+    if (user.externalId && user.externalId === assignee) return;
 
     // Compare with email with internal email in workflow platform
     if (identity.email === assignee) return;
@@ -154,4 +166,10 @@ async function hasPermissionWithAssignee(assignee: string, userId: string) {
             message: 'Current email does not match with assignee.',
         },
     });
+}
+
+// Security helper function to validate email format
+function isValidEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email) && email.length <= 254;
 }

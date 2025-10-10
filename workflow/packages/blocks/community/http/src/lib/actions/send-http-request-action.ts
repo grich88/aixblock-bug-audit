@@ -163,6 +163,11 @@ export const httpSendRequestAction = createAction({
     assertNotNullOrUndefined(method, 'Method');
     assertNotNullOrUndefined(url, 'URL');
 
+    // Security fix: Validate URL to prevent SSRF attacks
+    if (!isValidUrl(url)) {
+      throw new Error('Invalid URL: Only HTTPS URLs to external domains are allowed');
+    }
+
     const request: HttpRequest = {
       method,
       url,
@@ -216,3 +221,51 @@ export const httpSendRequestAction = createAction({
     }
   },
 });
+
+// Security helper function to validate URLs and prevent SSRF
+function isValidUrl(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+    
+    // Only allow HTTPS protocol
+    if (parsedUrl.protocol !== 'https:') {
+      return false;
+    }
+    
+    // Block internal/private IP addresses
+    const hostname = parsedUrl.hostname;
+    if (isPrivateIP(hostname)) {
+      return false;
+    }
+    
+    // Block localhost and loopback addresses
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+      return false;
+    }
+    
+    // Block file:// and data:// protocols
+    if (url.startsWith('file://') || url.startsWith('data://')) {
+      return false;
+    }
+    
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isPrivateIP(hostname: string): boolean {
+  // Check for private IP ranges
+  const privateRanges = [
+    /^10\./,                    // 10.0.0.0/8
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./,  // 172.16.0.0/12
+    /^192\.168\./,               // 192.168.0.0/16
+    /^127\./,                    // 127.0.0.0/8 (loopback)
+    /^169\.254\./,               // 169.254.0.0/16 (link-local)
+    /^::1$/,                     // IPv6 loopback
+    /^fc00:/,                    // IPv6 private
+    /^fe80:/,                    // IPv6 link-local
+  ];
+  
+  return privateRanges.some(range => range.test(hostname));
+}
