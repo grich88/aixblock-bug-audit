@@ -109,8 +109,18 @@ export const jwtUtils = {
         issuer = ISSUER,
         audience,
     }: VerifyParams): Promise<T> {
+        // Security fix: Explicitly reject 'none' algorithm to prevent algorithm confusion attacks
+        if (algorithm === 'none' || algorithm === JwtSignAlgorithm.HS256 === false) {
+            throw new AIxBlockError({
+                code: ErrorCode.INVALID_BEARER_TOKEN,
+                params: {
+                    message: 'Algorithm "none" is not allowed for security reasons',
+                },
+            })
+        }
+
         const verifyOptions: VerifyOptions = {
-            algorithms: [algorithm],
+            algorithms: [algorithm], // Explicitly restrict to specified algorithm
             ...spreadIfDefined('issuer', issuer),
             ...spreadIfDefined('audience', audience),
         }
