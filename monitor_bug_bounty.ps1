@@ -1,7 +1,7 @@
 # AIxBlock Bug Bounty Monitoring Script
-# Monitors GitHub issue #307 for AIxBlock team responses
+# Monitors GitHub issue #309 for AIxBlock team responses
 
-$issueNumber = 307
+$issueNumber = 309
 $repo = "AIxBlock-2023/awesome-ai-dev-platform-public"
 $logFile = "bug_bounty_monitor.log"
 
