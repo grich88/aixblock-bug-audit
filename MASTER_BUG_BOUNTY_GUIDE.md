@@ -803,6 +803,91 @@ gh issue view 309 --repo AIxBlock-2023/aixblock-ai-dev-platform-public --comment
 
 ---
 
+## **📋 TESTED ENDPOINTS AND VULNERABILITIES TRACKER**
+
+### **✅ COMPLETED TESTING SESSIONS**
+
+#### **Session 1: October 18, 2025 - Comprehensive Penetration Testing**
+
+**🔍 XSS Testing - COMPLETED**
+- **Target**: `app.aixblock.io/search` - ❌ 404 Not Found
+- **Target**: `workflow.aixblock.io/api/v1/search` - ❌ 404 Not Found  
+- **Target**: `app.aixblock.io/api/v1/search` - ❌ 404 Not Found
+- **Result**: No XSS vulnerabilities found (endpoints don't exist)
+
+**🔍 SSRF Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/webhooks` - ❌ 404 Not Found
+- **Target**: `webhook.aixblock.io/api/v1/webhooks` - ❌ DNS resolution failed
+- **Result**: No SSRF vulnerabilities found (endpoints don't exist)
+
+**🔍 SQL Injection Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/query` - ❌ 404 Not Found
+- **Payloads Tested**: `SELECT * FROM users`, `' OR '1'='1`
+- **Result**: No SQL injection vulnerabilities found (endpoint doesn't exist)
+
+**🔍 IDOR Testing - COMPLETED**
+- **Target**: `app.aixblock.io/api/v1/users/1` - ❌ 404 Not Found
+- **Target**: `app.aixblock.io/api/v1/projects/123` - ❌ 404 Not Found
+- **Result**: No IDOR vulnerabilities found (endpoints don't exist)
+
+**🔍 Authentication Bypass Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/admin` - ❌ 404 Not Found
+- **Target**: `workflow.aixblock.io/api/v1/admin/users` - ❌ 404 Not Found
+- **Result**: No authentication bypass vulnerabilities found (endpoints don't exist)
+
+**🔍 Configuration Information Disclosure - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/flags` - ✅ **VULNERABLE**
+- **Status**: **DUPLICATE** - Already submitted as Issue #309
+- **Severity**: High (CVSS 7.2)
+- **Expected Reward**: $450 + 1,000 tokens
+
+### **📊 TESTING SUMMARY**
+
+| **Vulnerability Type** | **Endpoints Tested** | **Status** | **Result** |
+|------------------------|----------------------|------------|------------|
+| **XSS** | 3 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **SSRF** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **SQL Injection** | 1 endpoint | ❌ No vulnerabilities | Endpoint doesn't exist |
+| **IDOR** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **Auth Bypass** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **Config Disclosure** | 1 endpoint | ✅ **VULNERABLE** | **DUPLICATE - Issue #309** |
+
+### **🚫 AVOID RETESTING**
+
+**DO NOT TEST THESE AGAIN:**
+- ❌ `app.aixblock.io/search` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/search` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/search` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/webhooks` (404 Not Found)
+- ❌ `webhook.aixblock.io/api/v1/webhooks` (DNS resolution failed)
+- ❌ `workflow.aixblock.io/api/v1/query` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/users/1` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/projects/123` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/admin` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/admin/users` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/flags` (**DUPLICATE - Issue #309**)
+
+### **🎯 NEXT TESTING PRIORITIES**
+
+**Focus on NEW endpoints and attack vectors:**
+1. **AI/ML Specific Testing** - Prompt injection, model security
+2. **WebSocket Testing** - Real-time communication vulnerabilities
+3. **API Endpoint Discovery** - Find actual working endpoints
+4. **Business Logic Testing** - Workflow execution vulnerabilities
+5. **Authentication Testing** - JWT manipulation, session management
+6. **File Upload Testing** - Path traversal, malicious file uploads
+7. **CORS Testing** - Cross-origin request vulnerabilities
+
+### **📝 TESTING LOG**
+
+**Date**: October 18, 2025  
+**Session**: Comprehensive Penetration Testing  
+**Methodology**: Master Guide Framework  
+**Vulnerabilities Found**: 1 (Duplicate - Issue #309)  
+**Status**: Continue testing for NEW vulnerabilities
+
+---
+
 ## **🔒 PROPRIETARY METHODOLOGY STATUS**
 
 ### **Our Intellectual Property**
