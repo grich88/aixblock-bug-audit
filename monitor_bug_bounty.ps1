@@ -2,9 +2,9 @@
 # Monitors GitHub issues and PRs for AIxBlock team responses
 # Based on successful Issue #309 submission methodology
 
-$issueNumber = 309
-$prNumber = 310
-$repo = "AIxBlock-2023/awesome-ai-dev-platform-public"
+$issueNumber = 311
+$prNumber = 312
+$repo = "AIxBlock-2023/aixblock-ai-dev-platform-public"
 $logFile = "bug_bounty_monitor.log"
 
 Write-Host "🔍 Monitoring AIxBlock Bug Bounty Issue #$issueNumber and PR #$prNumber" -ForegroundColor Green

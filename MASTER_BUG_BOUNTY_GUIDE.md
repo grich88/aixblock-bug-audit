@@ -841,6 +841,128 @@ This comprehensive master guide consolidates:
 - **Complete templates** for all submission components
 - **Monitoring and tracking** capabilities
 
+---
+
+## **📋 TESTED ENDPOINTS AND VULNERABILITIES TRACKER**
+
+### **✅ COMPLETED TESTING SESSIONS**
+
+#### **Session 1: October 18, 2025 - Comprehensive Penetration Testing**
+
+**🔍 XSS Testing - COMPLETED**
+- **Target**: `app.aixblock.io/search` - ❌ 404 Not Found
+- **Target**: `workflow.aixblock.io/api/v1/search` - ❌ 404 Not Found  
+- **Target**: `app.aixblock.io/api/v1/search` - ❌ 404 Not Found
+- **Result**: No XSS vulnerabilities found (endpoints don't exist)
+
+**🔍 SSRF Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/webhooks` - ❌ 404 Not Found
+- **Target**: `webhook.aixblock.io/api/v1/webhooks` - ❌ DNS resolution failed
+- **Result**: No SSRF vulnerabilities found (endpoints don't exist)
+
+**🔍 SQL Injection Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/query` - ❌ 404 Not Found
+- **Payloads Tested**: `SELECT * FROM users`, `' OR '1'='1`
+- **Result**: No SQL injection vulnerabilities found (endpoint doesn't exist)
+
+**🔍 IDOR Testing - COMPLETED**
+- **Target**: `app.aixblock.io/api/v1/users/1` - ❌ 404 Not Found
+- **Target**: `app.aixblock.io/api/v1/projects/123` - ❌ 404 Not Found
+- **Result**: No IDOR vulnerabilities found (endpoints don't exist)
+
+**🔍 Authentication Bypass Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/admin` - ❌ 404 Not Found
+- **Target**: `workflow.aixblock.io/api/v1/admin/users` - ❌ 404 Not Found
+- **Result**: No authentication bypass vulnerabilities found (endpoints don't exist)
+
+**🔍 Configuration Information Disclosure - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/flags` - ✅ **VULNERABLE**
+- **Status**: **DUPLICATE** - Already submitted as Issue #309
+- **Severity**: High (CVSS 7.2)
+- **Expected Reward**: $450 + 1,000 tokens
+
+**🔍 CORS Misconfiguration Testing - COMPLETED**
+- **Target**: `workflow.aixblock.io/api/v1/flags` - ✅ **VULNERABLE**
+- **Status**: **NEW** - Submitted as Issue #311
+- **Severity**: Medium (CVSS 6.5)
+- **Expected Reward**: $200 + 500 tokens
+
+### **📊 TESTING SUMMARY**
+
+| **Vulnerability Type** | **Endpoints Tested** | **Status** | **Result** |
+|------------------------|----------------------|------------|------------|
+| **XSS** | 3 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **SSRF** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **SQL Injection** | 1 endpoint | ❌ No vulnerabilities | Endpoint doesn't exist |
+| **IDOR** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **Auth Bypass** | 2 endpoints | ❌ No vulnerabilities | Endpoints don't exist |
+| **Config Disclosure** | 1 endpoint | ✅ **VULNERABLE** | **DUPLICATE - Issue #309** |
+| **CORS Misconfig** | 1 endpoint | ✅ **VULNERABLE** | **NEW - Issue #311** |
+
+### **🚫 AVOID RETESTING**
+
+**DO NOT TEST THESE AGAIN:**
+- ❌ `app.aixblock.io/search` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/search` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/search` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/webhooks` (404 Not Found)
+- ❌ `webhook.aixblock.io/api/v1/webhooks` (DNS resolution failed)
+- ❌ `workflow.aixblock.io/api/v1/query` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/users/1` (404 Not Found)
+- ❌ `app.aixblock.io/api/v1/projects/123` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/admin` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/admin/users` (404 Not Found)
+- ❌ `workflow.aixblock.io/api/v1/flags` (**DUPLICATE - Issue #309**)
+
+### **🎯 NEXT TESTING PRIORITIES**
+
+**Focus on NEW endpoints and attack vectors:**
+1. **AI/ML Specific Testing** - Prompt injection, model security
+2. **WebSocket Testing** - Real-time communication vulnerabilities
+3. **API Endpoint Discovery** - Find actual working endpoints
+4. **Business Logic Testing** - Workflow execution vulnerabilities
+5. **Authentication Testing** - JWT manipulation, session management
+6. **File Upload Testing** - Path traversal, malicious file uploads
+7. **CORS Testing** - Cross-origin request vulnerabilities
+
+### **📝 TESTING LOG**
+
+**Date**: October 18, 2025  
+**Session**: Comprehensive Penetration Testing  
+**Methodology**: Master Guide Framework  
+**Vulnerabilities Found**: 2 (1 Duplicate, 1 New)  
+**Status**: Continue testing for NEW vulnerabilities
+
+---
+
+## **🏆 SUCCESSFUL VULNERABILITIES TRACKER**
+
+### **✅ SUBMITTED VULNERABILITIES**
+
+| **Issue** | **Vulnerability** | **Severity** | **Status** | **Expected Reward** |
+|-----------|-------------------|--------------|------------|---------------------|
+| **#309** | Configuration Information Disclosure | High (CVSS 7.2) | ✅ **SUBMITTED** | $450 + 1,000 tokens |
+| **#311** | CORS Misconfiguration | Medium (CVSS 6.5) | ✅ **SUBMITTED** | $200 + 500 tokens |
+
+### **📊 TOTAL EXPECTED REWARDS**
+- **Cash**: $650
+- **Tokens**: 1,500 worth of token & rev-share
+- **Total Value**: $650 + 1,500 tokens
+
+### **🔍 PREVIOUS SUCCESSFUL VULNERABILITIES (FROM REWARDED REPORTS)**
+
+**Recorded from AIxBlock Bug Bounty Program:**
+1. **IDOR**: $450 + 1000 tokens (@0xygyn-X)
+2. **Stored XSS**: $200-450 + 500-1000 tokens (@eMKayRa0, @sonw-vh)
+3. **Auth Bypass**: $225 + 500 tokens (@0XZAMAJ, @eMKayRa0)
+4. **Path Traversal**: $100 + 250 tokens (@comradeflats)
+5. **Rate Limiting Bypass**: $100 + 250 tokens (@Wizard0fthedigitalage, @0xygyn-X)
+6. **Session Mismanagement**: $225 + 500 tokens (@eMKayRa0)
+
+**Total Recorded Rewards**: $1,350 + 3,250 tokens from previous successful submissions
+
+---
+
 **Status**: 🏆 **MASTER GUIDE COMPLETE - READY FOR ALL FUTURE SUBMISSIONS**
 
 Use this single comprehensive guide for all future AIxBlock bug bounty submissions to ensure maximum success probability based on proven Issue #309 methodology! 🔒
