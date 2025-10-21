@@ -58,6 +58,20 @@
 - **ALWAYS**: Focus on high-value vulnerability types with real exploitation
 - **CRITICAL**: Verify actual security impact before submission
 
+### **9. REPOSITORY IDENTITY PROTECTION (CRITICAL)**
+- **MANDATORY**: ALL submissions MUST originate from `grich88` repository
+- **NEVER**: Submit from `kolcompass` or any other identity
+- **REQUIRED**: Verify GitHub identity before every submission
+- **CRITICAL**: Maintain consistent `grich88` identity across all platforms
+- **OUTCOME**: Consistent attribution and reward eligibility
+
+### **10. INTELLECTUAL PROPERTY PROTECTION (CRITICAL)**
+- **MANDATORY**: Keep ALL proprietary methods in main repository only
+- **NEVER**: Expose vulnerability scanner, methods documentation, or guides in bounty submissions
+- **REQUIRED**: Submit only minimal security fix files to bounty repositories
+- **CRITICAL**: Maintain complete separation between IP and bounty submissions
+- **OUTCOME**: Zero IP leakage while maintaining submission quality
+
 ---
 
 ## **🔍 VULNERABILITY DISCOVERY PROCESS**
@@ -271,8 +285,40 @@
 
 ---
 
-**STATUS**: ✅ **COMPREHENSIVE PRINCIPLES ESTABLISHED**
+## **📚 LESSONS LEARNED FROM AIXBLOCK AUDIT (OCTOBER 2025)**
 
-**LAST UPDATED**: October 20, 2025
-**VERSION**: 1.0
-**NEXT REVIEW**: November 20, 2025
+### **Critical Success Factors**
+1. **Repository Identity Consistency**: All submissions must originate from `grich88` - never from `kolcompass`
+2. **IP Protection**: Maintain strict separation between proprietary methods and bounty submissions
+3. **Pull Request Linking**: Essential for reward eligibility - always include "Closes #XXX"
+4. **Withdrawal Strategy**: Proactively withdraw high-risk submissions matching rejection patterns
+5. **Real-World Exploits**: Integration of dark web intelligence significantly improves submission quality
+
+### **Process Improvements Implemented**
+1. **Enhanced Scanner**: Integrated real-world exploit payloads and CVE mappings
+2. **Rejection Pattern Database**: Created comprehensive database of rejected vulnerability types
+3. **Withdrawal Framework**: Established process for withdrawing high-risk submissions
+4. **IP Protection Protocol**: Strict separation between main repository and bounty submissions
+5. **Identity Verification**: Mandatory `grich88` identity verification before all submissions
+
+### **Quality Metrics Achieved**
+- **Submission Success Rate**: 7/7 vulnerabilities submitted with proper PR linking
+- **IP Protection**: 100% - Zero proprietary methods exposed in bounty submissions
+- **Process Compliance**: 100% - All submission criteria followed
+- **Documentation Quality**: Professional-grade reports with complete evidence
+- **Withdrawal Strategy**: 6 high-risk submissions proactively withdrawn
+
+### **Key Learnings for Future Audits**
+1. **Always verify repository identity before submission**
+2. **Maintain strict IP protection protocols**
+3. **Use real-world exploit intelligence for enhanced payloads**
+4. **Proactively withdraw submissions matching rejection patterns**
+5. **Ensure complete PR linking for all submissions**
+
+---
+
+**STATUS**: ✅ **COMPREHENSIVE PRINCIPLES ESTABLISHED WITH LESSONS LEARNED**
+
+**LAST UPDATED**: October 22, 2025
+**VERSION**: 2.0
+**NEXT REVIEW**: November 22, 2025
