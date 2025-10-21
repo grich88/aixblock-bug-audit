@@ -1,0 +1,315 @@
+# 🛡️ AIxBlock Security Audit Cursor Rules
+
+## **CORE MANDATES**
+
+### **1. DUPLICATE PREVENTION (CRITICAL)**
+- ALWAYS analyze ALL existing issues before creating new vulnerability reports
+- MANDATORY: Run `gh issue list --state all --limit 200` and `gh pr list --state all --limit 100`
+- REQUIRED: Check minimum 200+ issues and 100+ PRs for duplicates
+- MANDATORY: Create comparison matrix for each vulnerability
+- NEVER submit without comprehensive duplicate analysis
+- ALWAYS document uniqueness verification
+
+### **2. LIVE PRODUCTION TESTING (CRITICAL)**
+- ALWAYS test vulnerabilities against production systems
+- MANDATORY: Use `curl` commands with live proof-of-concept
+- REQUIRED: Capture screenshots, terminal output, HTTP headers
+- NEVER submit theoretical vulnerabilities
+- ALWAYS verify against actual production endpoints
+- MANDATORY: Document live testing evidence
+
+### **3. SCOPE COMPLIANCE (CRITICAL)**
+- ALWAYS verify targets are within official bug bounty scope
+- MANDATORY: Check against official AIxBlock scope document
+- REQUIRED: Confirm domain, asset value, and vulnerability type
+- NEVER submit out-of-scope vulnerabilities
+- ALWAYS maintain scope compliance matrix
+
+### **4. AI-HUMAN HYBRID METHODOLOGY (MANDATORY)**
+- ALWAYS combine AI tools with human expertise
+- MANDATORY: Use AI for pattern recognition, human for validation
+- REQUIRED: AI discovery → Human verification → Manual testing
+- NEVER rely solely on AI findings
+- ALWAYS document AI tools used and human validation steps
+
+### **5. COMPREHENSIVE DOCUMENTATION (MANDATORY)**
+- ALWAYS document every step of the process
+- MANDATORY: Maintain detailed logs, evidence, and analysis
+- REQUIRED: Use consistent formatting and categorization
+- NEVER submit without complete documentation
+- ALWAYS maintain complete audit trail
+
+### **6. INDIVIDUAL VULNERABILITY SUBMISSION (MANDATORY)**
+- ALWAYS submit each vulnerability as separate GitHub issue
+- MANDATORY: Create individual pull request for each fix
+- REQUIRED: Reference issue number in corresponding PR
+- NEVER combine multiple vulnerabilities in single submission
+- ALWAYS follow priority-based submission order (Critical → High → Medium → Low)
+
+### **7. PULL REQUEST LINKING (CRITICAL)**
+- MANDATORY: Include "Closes #XXX" in PR description
+- REQUIRED: Verify PR icons appear on GitHub issues
+- NEVER submit PR without proper issue linking
+- ALWAYS test visual consistency after linking
+- CRITICAL: PR linking is essential for full reward eligibility
+
+### **8. REJECTION PATTERN AWARENESS (MANDATORY)**
+- MANDATORY: Check REJECTED_VULNERABILITIES_DATABASE.md before submission
+- REQUIRED: Flag common rejection patterns as "Informational" concerns
+- NEVER submit vulnerabilities that match known rejection patterns
+- ALWAYS focus on high-value vulnerability types with real exploitation
+- CRITICAL: Verify actual security impact before submission
+
+---
+
+## **VULNERABILITY DISCOVERY WORKFLOW**
+
+### **Phase 1: Reconnaissance (MANDATORY)**
+```bash
+# Subdomain Enumeration
+nslookup target.com
+dig target.com
+curl -s https://target.com -v
+
+# Port Scanning
+curl -s https://target.com:443 -v
+curl -s https://target.com:80 -v
+
+# Technology Stack Analysis
+curl -s https://target.com -I
+curl -s https://target.com/api/version -v
+```
+
+### **Phase 2: Vulnerability Discovery (MANDATORY)**
+```bash
+# CORS Testing
+curl -s "https://target.com/api/endpoint" -H "Origin: https://evil.com" -v
+
+# Header Injection Testing
+curl -s "https://target.com/api/endpoint" -H "User-Agent: Mozilla/5.0%0d%0aX-Injected-Header: test" -v
+
+# IP Spoofing Testing
+curl -s "https://target.com/api/endpoint" -H "X-Forwarded-For: 127.0.0.1" -H "X-Real-IP: 192.168.1.1" -v
+
+# Version Disclosure Testing
+curl -s "https://target.com" -I
+```
+
+### **Phase 3: Validation & Documentation (MANDATORY)**
+```bash
+# Duplicate Prevention
+gh issue list --state all --limit 200
+gh pr list --state all --limit 100
+
+# Evidence Collection
+# Capture screenshots, terminal output, HTTP headers
+# Create proof-of-concept exploits
+# Document reproduction steps
+```
+
+---
+
+## **DOCUMENTATION STANDARDS**
+
+### **Vulnerability Report Template (MANDATORY)**
+```markdown
+# 🚨 [SEVERITY]: [VULNERABILITY_TYPE] on [TARGET]
+
+## **📊 SUMMARY**
+- **Severity**: [High/Medium/Low] (CVSS [X.X])
+- **Asset**: [target.com] ([Critical/High/Medium/Low])
+- **Vulnerability**: [Detailed description]
+
+## **🔍 TECHNICAL DETAILS**
+- **Affected Component**: [Specific file/endpoint]
+- **Root Cause**: [Technical explanation]
+- **Attack Vector**: [How exploitation works]
+
+## **💥 PROOF OF CONCEPT**
+```bash
+curl -s "https://target.com/endpoint" -H "Header: value" -v
+```
+
+**Expected Response**:
+```
+HTTP/1.1 200 OK
+Vulnerable-Header: value
+```
+
+## **🎯 IMPACT ASSESSMENT**
+- **Confidentiality**: [High/Medium/Low]
+- **Integrity**: [High/Medium/Low]
+- **Availability**: [High/Medium/Low]
+- **Business Impact**: [Detailed analysis]
+
+## **🛡️ REMEDIATION**
+- **Immediate Fix**: [Code-level solution]
+- **Long-term**: [Configuration changes]
+- **Verification**: [Testing steps]
+```
+
+---
+
+## **TOOL INTEGRATION REQUIREMENTS**
+
+### **Open-Source Security Tools (MANDATORY)**
+- **Web Applications**: OWASP ZAP, Wapiti, sqlmap, XSStrike, SSRFmap
+- **API Security**: Autoswagger, JWT Tool, Kiterunner, Arjun
+- **Container Security**: Trivy, Grype, Kube-bench, Lynis
+- **Smart Contracts**: Solana X-Ray, Cargo Audit, Soteria
+- **Data Engine**: Mongoaudit, S3Scanner, Elasticsearch scanners
+- **Webhook Security**: Webhook Tester, Open Redirect checks
+- **MCP Integration**: Nmap, OpenVAS, TestSSL.sh, Checkov
+
+### **AI-Assisted Tools (MANDATORY)**
+- **Code Analysis**: LLMs for pattern recognition
+- **Static Analysis**: CodeQL, Slither, SonarQube
+- **Dynamic Analysis**: AI-powered fuzzers
+- **Exploit Generation**: Automated exploit development
+- **Vulnerability Scanners**: AI-based pattern matching
+
+---
+
+## **QUALITY ASSURANCE CHECKLIST**
+
+### **Pre-Submission Checklist (MANDATORY)**
+- [ ] **Duplicate Check**: Analyzed 200+ issues and 100+ PRs
+- [ ] **Live Testing**: All vulnerabilities tested against production
+- [ ] **Scope Compliance**: All targets within official scope
+- [ ] **Evidence Collection**: Screenshots, terminal output, PoCs
+- [ ] **CVSS Scoring**: Accurate severity assessment
+- [ ] **Documentation**: Complete reports and templates
+- [ ] **Code Fixes**: Working solutions provided
+- [ ] **Repository Engagement**: Starred and forked repository
+
+### **Submission Quality Standards (MANDATORY)**
+- **Technical Accuracy**: 100% accurate technical details
+- **Evidence Quality**: Clear, reproducible proof-of-concepts
+- **Documentation**: Professional, comprehensive reports
+- **Impact Assessment**: Accurate business impact analysis
+- **Code Quality**: Working, production-ready fixes
+
+---
+
+## **SUCCESS PATTERNS (FOLLOW THESE)**
+
+### **High-Value Vulnerability Types**
+1. **IDOR Vulnerabilities** - High acceptance rate
+2. **XSS (Stored/Reflected)** - High acceptance rate
+3. **Authentication Bypass** - High acceptance rate
+4. **Session Management Issues** - High acceptance rate
+5. **CORS Misconfiguration** - Medium acceptance rate (with sensitive data)
+
+### **Rejection Patterns (AVOID THESE)**
+1. **CORS on Non-Sensitive Endpoints** - Low acceptance rate
+2. **Development Environment Issues** - Always rejected
+3. **Informational Disclosures** - Low acceptance rate
+4. **Theoretical Vulnerabilities** - Always rejected
+
+### **Key Success Factors (MANDATORY)**
+1. **Live Production Proof** - Essential for acceptance
+2. **Sensitive Data Exposure** - High value for rewards
+3. **Working Exploit** - Required for validation
+4. **Clear Business Impact** - Important for severity
+5. **Specific Endpoints** - Better than wildcards
+
+---
+
+## **COMMAND REFERENCE**
+
+### **GitHub CLI Commands (MANDATORY)**
+```bash
+# List all issues
+gh issue list --state all --limit 200
+
+# List all PRs
+gh pr list --state all --limit 100
+
+# View specific issue
+gh issue view [ISSUE_NUMBER]
+
+# View specific PR
+gh pr view [PR_NUMBER]
+
+# Create issue
+gh issue create --title "[TITLE]" --body-file issue_content.md
+
+# Create PR
+gh pr create --title "[TITLE]" --body "[DESCRIPTION]"
+```
+
+### **Testing Commands (MANDATORY)**
+```bash
+# CORS Testing
+curl -s "https://target.com/endpoint" -H "Origin: https://evil.com" -v
+
+# Header Injection
+curl -s "https://target.com/endpoint" -H "User-Agent: Mozilla/5.0%0d%0aX-Injected: test" -v
+
+# IP Spoofing
+curl -s "https://target.com/endpoint" -H "X-Forwarded-For: 127.0.0.1" -v
+
+# Version Disclosure
+curl -s "https://target.com" -I
+```
+
+---
+
+## **ERROR PREVENTION**
+
+### **Common Mistakes (AVOID)**
+1. **Skipping Duplicate Check** - ALWAYS check existing issues
+2. **Theoretical Vulnerabilities** - ALWAYS test against production
+3. **Out-of-Scope Targets** - ALWAYS verify scope compliance
+4. **Incomplete Documentation** - ALWAYS provide complete evidence
+5. **Missing Code Fixes** - ALWAYS provide working solutions
+
+### **Validation Steps (MANDATORY)**
+1. **Duplicate Verification**: Check 200+ issues minimum
+2. **Live Testing**: Verify against production
+3. **Scope Check**: Confirm target is in scope
+4. **Evidence Review**: Ensure complete documentation
+5. **Code Quality**: Verify working solutions
+
+---
+
+## **COMPLIANCE REQUIREMENTS**
+
+### **Bug Bounty Program Compliance (MANDATORY)**
+- **Repository Engagement**: Star and fork repository
+- **Code Fixes**: Provide working code solutions
+- **Issue Templates**: Use official issue templates
+- **Pull Requests**: Submit PRs with fixes
+- **Timeline Compliance**: Meet response time requirements
+
+### **Legal and Ethical Compliance (MANDATORY)**
+- **Authorized Testing**: Only test authorized targets
+- **Responsible Disclosure**: Follow responsible disclosure practices
+- **No Harm**: Ensure no harm to production systems
+- **Privacy Protection**: Protect user privacy and data
+
+---
+
+## **CONTINUOUS IMPROVEMENT**
+
+### **Process Optimization (MANDATORY)**
+- **Regular Review**: Monthly process review and updates
+- **Tool Updates**: Quarterly tool arsenal updates
+- **Methodology Refinement**: Continuous methodology improvement
+- **Success Analysis**: Regular analysis of acceptance patterns
+
+### **Quality Metrics (TRACK THESE)**
+- **Acceptance Rate**: Target 80%+ acceptance rate
+- **False Positive Rate**: Target <5% false positive rate
+- **Duplicate Rate**: Target 0% duplicate submissions
+- **Quality Score**: Target 90%+ quality score
+
+---
+
+**STATUS**: ✅ **COMPREHENSIVE CURSOR RULES ESTABLISHED**
+
+**LAST UPDATED**: October 20, 2025
+**VERSION**: 1.0
+**NEXT REVIEW**: November 20, 2025
+
+**REMEMBER**: These rules are MANDATORY and must be followed for every security audit engagement. Failure to follow these rules will result in incomplete or rejected submissions.

